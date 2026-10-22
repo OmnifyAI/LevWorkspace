@@ -2,67 +2,72 @@
 
 # Lev
 
-**A desktop workspace where your coding agents build the dashboards and tools you need.**
+**Describe the dashboard or tool you need. Your agents build it.**
 
-Run Claude Code, OpenAI Codex and Gemini CLI side by side, ask them for a dashboard or a small tool in plain words,
-and use what they build — with every action behind a permission you control.
+Don't wait for someone to build the screen your project needs — ask for it. Claude Code, Codex and Gemini agents
+build it right inside your project, you use it immediately, and you keep asking until it's right.
 
 **English** · [한국어](README.ko.md)
 
-<img src="docs/screenshots/board-dashboard.png" alt="A project dashboard in Lev: commit activity, TODOs, agents" width="100%" />
+<img src="docs/screenshots/build-result.png" alt="A stock tool built by an agent from a single request" width="100%" />
+
+<sub>↑ Built by an agent from a single request. No hand edits.</sub>
 
 </div>
 
 ---
 
-## Why Lev
+## Build your own tool
 
-Coding-agent CLIs are powerful, but their work disappears into terminal scrollback. Lev gives each project **boards** — dashboards and small tools — that agents build for you and you keep using:
+### 1. Ask in plain words
 
-- **Dashboards you describe.** Type "show commits per day for the last two weeks" and the builder agent edits the board in front of you.
-- **Tools, not just charts.** A board can take input, run a script, save files and hand work to an agent — a release-notes writer, a TODO triager, whatever your project needs.
-- **Agents that work together.** Claude Code, Codex and Gemini sessions in one list; agents can message each other and delegate to child agents.
-- **You stay in control.** Scripts, file saves, messages to agents and shell commands go through an in-app confirmation — or one AutoMode switch when you trust the run.
+<img src="docs/screenshots/build-ask.png" alt="New tool dialog with the request written in plain words" width="100%" />
 
-## Dashboards
+Say what it should show, which buttons it needs and what happens when you press them. No code, no file formats.
 
-Every project has its own **boards**. Tell the dashboard-builder agent what you want to see and it builds it:
+### 2. Watch it being built
 
-- **Numbers, tables, lists and charts** — ready-made widgets, laid out on a grid.
-- **Anything custom** — interactive charts, filters, your own layouts, styled to match the app.
-- **Data from anywhere** — small scripts pull in what the app doesn't know: git history, log files, external services. The dashboard above counts commits and TODOs this way.
+<img src="docs/screenshots/build-working.png" alt="The tool appears while the builder agent is still working" width="100%" />
 
-<table>
-<tr>
-<td width="50%"><img src="docs/screenshots/dashboard.png" alt="Starter dashboard with example requests" /></td>
-<td width="50%"><img src="docs/screenshots/floating.png" alt="Floating chat over the dashboard" /></td>
-</tr>
-<tr>
-<td><b>Start simple, grow it by asking.</b> New projects get a minimal board and <b>example requests</b> — click one, edit it, send it to the dashboard-builder agent.</td>
-<td><b>Keep talking while you look.</b> Pick an agent from a board and its chat opens in a floating window you can drag, resize or fold into a bubble.</td>
-</tr>
-</table>
+The dashboard-builder agent writes the screen and any data scripts straight into your project. The tool redraws every time a file is saved, so you see it take shape.
 
-## Tools
+### 3. Use it, then keep shaping it
 
-A **tool** is a board that does something — a small app for your project. Agents build it the same way — and it can put agents to work.
+The screenshot at the top is the result of that exact request — one pass with Claude, about $0.65. Press **재입고 알림 맡기기** (hand off a restock alert) on a sold-out product and a new agent goes off to implement it.
+Want changes? Ask again in the request box, or click one of the **example requests** the agent left for you — "sort by lowest stock", "let me change the low-stock threshold".
 
-<img src="docs/screenshots/tool-release.png" alt="Release notes tool: pick commits, ask an agent for a draft" width="100%" />
+## What can you build?
 
-**Release notes** — pick commits from the last week, press *Ask an agent*, and a new session writes the draft into the tool's data folder. Edit it, save versions, export it anywhere.
+Anything from a page of numbers and charts to a small app that takes input and gets work done.
+
+- **Data the app doesn't have** — git history, log files, databases, external services. The agent writes the scripts it needs, too.
+- **Hand work to agents** — one button starts a new agent or gives a task to one that's already running.
+- **Save and export** — keep what you write in a tool inside the project, or export it anywhere.
+- **Looks like the app** — cards, tables and charts that match Lev without any styling work.
+
+More boards from the same demo project:
 
 <table>
 <tr>
+<td width="50%"><img src="docs/screenshots/board-dashboard.png" alt="Development dashboard" /></td>
 <td width="50%"><img src="docs/screenshots/tool-todo.png" alt="TODO triage tool" /></td>
-<td width="50%"><img src="docs/screenshots/tool-confirm.png" alt="Confirmation before the tool messages an agent" /></td>
 </tr>
 <tr>
-<td><b>TODO triage</b> — a script collects TODO comments from the code; pick some and send them to an agent. The tool remembers what was handed to whom.</td>
-<td><b>Nothing happens behind your back.</b> When a tool sends a message, creates a session or saves a file, Lev shows exactly what will happen first.</td>
+<td><b>Development dashboard</b> — commits per day, open TODOs, cost per agent.</td>
+<td><b>TODO triage</b> — collect TODOs from the code, hand some to an agent, remember who got what.</td>
+</tr>
+<tr>
+<td width="50%"><img src="docs/screenshots/tool-release.png" alt="Release notes tool" /></td>
+<td width="50%"><img src="docs/screenshots/tool-confirm.png" alt="Confirmation before a tool hands work to an agent" /></td>
+</tr>
+<tr>
+<td><b>Release notes</b> — pick commits, have an agent draft the notes, edit and save.</td>
+<td><b>Nothing happens behind your back</b> — before a tool hands off work or saves a file, Lev shows you exactly what will happen.</td>
 </tr>
 </table>
 
-Star a board to pin it to the sidebar — the two tools above live under **즐겨찾기** (Favorites).
+Try asking for: an API tester with a button per endpoint, today's error-log summary, a pre-release checklist, a missing-translation finder, an asset gallery…
+Star the boards you use most to pin them to the sidebar.
 
 ## Agents
 
@@ -71,6 +76,7 @@ Star a board to pin it to the sidebar — the two tools above live under **즐�
 - **One list for every CLI** — status, cost and provider at a glance; right-click to rename, reset or delete.
 - **Agent-to-agent messages:** the receiver sees *who* sent it, and its answer goes back to the sender automatically. Above, "API 리뷰" answers a question from "리드".
 - **Child agents:** delegate sub-tasks; results are reported to the parent when all children finish.
+- **Chat while you look:** pick an agent from a board and its chat opens in a floating window you can drag or fold into a bubble.
 
 <table>
 <tr>
@@ -122,7 +128,7 @@ npm start          # run the built app
 npm run dist:win   # installer (also dist:mac, dist:linux)
 ```
 
-Then: **프로젝트 → 새 프로젝트** to pick a folder, **CLI 연결** to check which CLIs were detected, and type what you want to see into the dashboard's request box.
+Then: **프로젝트 → 새 프로젝트** to pick a folder, **CLI 연결** to check which CLIs were detected, and describe what you want under **보드 → + 새 도구** (Boards → New tool).
 
 > The UI is currently in Korean. English UI is planned.
 
