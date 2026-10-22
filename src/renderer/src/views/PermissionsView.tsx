@@ -18,7 +18,7 @@ export function PermissionsView({ state }: ViewProps): ReactNode {
             <span className="strong">자동 모드 (AutoMode)</span>
             <span className="block-text muted small">
               확인 창이 뜰 요청을 모두 묻지 않고 허용합니다 — claude 의 셸 명령·웹 가져오기·스킬 같은 CLI 도구, "매번 확인"인 MCP 도구, 메시지 보내기·세션 만들기·파일
-              저장. "차단"한 MCP 도구와 아래 "쓰기 동작 허용"을 끈 경우는 그대로 막힙니다. 활동 로그에는 남습니다.
+              저장, 대시보드 스크립트 실행. "차단"한 MCP 도구와 아래 "쓰기 동작 허용"을 끈 경우는 그대로 막힙니다. 활동 로그에는 남습니다.
             </span>
           </span>
           <input

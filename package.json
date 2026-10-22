@@ -4,7 +4,7 @@
   "version": "0.1.0",
   "description": "Claude / Codex / Gemini CLI 에이전트를 한 곳에서 다루는 워크스페이스",
   "main": "./out/main/index.js",
-  "license": "UNLICENSED",
+  "license": "MIT",
   "private": true,
   "scripts": {
     "dev": "electron-vite dev",

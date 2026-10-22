@@ -899,8 +899,12 @@ export class Workspace {
     const hash = hashFile(abs)
     const trustKey = `${p.id}:${rel}`
     if (this.store.db.trustedScripts[trustKey] !== hash) {
-      const ok = await this.approveScript(trustKey, hash, abs, rel, origin)
-      if (!ok) throw new Error(`사용자가 스크립트 실행을 거부했습니다: ${rel} (내용이 바뀌거나 앱을 다시 켜면 다시 묻습니다)`)
+      // 자동 모드: 승인 창 없이 실행한다. 신뢰 기록은 남기지 않아 자동 모드를 끄면 다시 묻는다
+      if (this.store.db.settings.autoApprove) this.log(undefined, 'write', `스크립트 ${rel} 자동 허용 (${origin})`, p.id)
+      else {
+        const ok = await this.approveScript(trustKey, hash, abs, rel, origin)
+        if (!ok) throw new Error(`사용자가 스크립트 실행을 거부했습니다: ${rel} (내용이 바뀌거나 앱을 다시 켜면 다시 묻습니다)`)
+      }
     }
     const key = `${trustKey}:${JSON.stringify(args ?? {})}`
     const running = this.scriptRuns.get(key)

@@ -2,14 +2,14 @@
 
 # Lev
 
-**One desktop workspace for your coding agents — Claude Code, OpenAI Codex and Gemini CLI.**
+**A desktop workspace where your coding agents build the dashboards and tools you need.**
 
-Run several agents side by side, let them talk to each other, build your own dashboards by just asking,
-and keep every tool call behind a permission you control.
+Run Claude Code, OpenAI Codex and Gemini CLI side by side, ask them for a dashboard or a small tool in plain words,
+and use what they build — with every action behind a permission you control.
 
 **English** · [한국어](README.ko.md)
 
-<img src="docs/screenshots/chat.png" alt="Lev main window: agent list, conversation, file tree" width="100%" />
+<img src="docs/screenshots/board-dashboard.png" alt="A project dashboard in Lev: commit activity, TODOs, agents" width="100%" />
 
 </div>
 
@@ -17,22 +17,59 @@ and keep every tool call behind a permission you control.
 
 ## Why Lev
 
-Coding-agent CLIs are powerful but live in separate terminals. Lev wraps them in one Electron app (Windows · macOS · Linux):
+Coding-agent CLIs are powerful, but their work disappears into terminal scrollback. Lev gives each project **boards** — dashboards and small tools — that agents build for you and you keep using:
 
-- **Every CLI, one place.** Claude Code, Codex and Gemini sessions in one list — resumable conversations, queued prompts, cost tracking.
-- **Agents that work together.** An agent can message another agent, delegate to child agents, and get the reply back automatically.
-- **Dashboards you describe.** Type "show cost per day as a bar chart" and a builder agent edits the dashboard for you.
-- **You stay in control.** Shell commands, web fetches, MCP tools and cross-agent messages go through an in-app confirmation — or a single AutoMode switch when you trust the run.
+- **Dashboards you describe.** Type "show commits per day for the last two weeks" and the builder agent edits the board in front of you.
+- **Tools, not just charts.** A board can take input, run a script, save files and hand work to an agent — a release-notes writer, a TODO triager, whatever your project needs.
+- **Agents that work together.** Claude Code, Codex and Gemini sessions in one list; agents can message each other and delegate to child agents.
+- **You stay in control.** Scripts, file saves, messages to agents and shell commands go through an in-app confirmation — or one AutoMode switch when you trust the run.
 
-## Feature tour
+## Dashboards
 
-### Conversations and agents
+Every project has its own **boards**. Tell the dashboard-builder agent what you want to see and it builds it:
 
-*(screenshot at the top: the "API 리뷰" agent answering a question that the "리드" agent sent it)*
+- **Numbers, tables, lists and charts** — ready-made widgets, laid out on a grid.
+- **Anything custom** — interactive charts, filters, your own layouts, styled to match the app.
+- **Data from anywhere** — small scripts pull in what the app doesn't know: git history, log files, external services. The dashboard above counts commits and TODOs this way.
 
-- **Slim agent list** with status, cost and provider; right-click to rename, open, reset or delete.
-- **Pinned 대화 (chat) tab** — the selected agent's conversation, wide and readable.
-- **Agent-to-agent messages:** when one agent calls `aw_send_message`, the receiver sees *who* sent it, and its answer is delivered back to the sender automatically (or as the tool result with `wait: true`).
+<table>
+<tr>
+<td width="50%"><img src="docs/screenshots/dashboard.png" alt="Starter dashboard with example requests" /></td>
+<td width="50%"><img src="docs/screenshots/floating.png" alt="Floating chat over the dashboard" /></td>
+</tr>
+<tr>
+<td><b>Start simple, grow it by asking.</b> New projects get a minimal board and <b>example requests</b> — click one, edit it, send it to the dashboard-builder agent.</td>
+<td><b>Keep talking while you look.</b> Pick an agent from a board and its chat opens in a floating window you can drag, resize or fold into a bubble.</td>
+</tr>
+</table>
+
+## Tools
+
+A **tool** is a board that does something — a small app for your project. Agents build it the same way — and it can put agents to work.
+
+<img src="docs/screenshots/tool-release.png" alt="Release notes tool: pick commits, ask an agent for a draft" width="100%" />
+
+**Release notes** — pick commits from the last week, press *Ask an agent*, and a new session writes the draft into the tool's data folder. Edit it, save versions, export it anywhere.
+
+<table>
+<tr>
+<td width="50%"><img src="docs/screenshots/tool-todo.png" alt="TODO triage tool" /></td>
+<td width="50%"><img src="docs/screenshots/tool-confirm.png" alt="Confirmation before the tool messages an agent" /></td>
+</tr>
+<tr>
+<td><b>TODO triage</b> — a script collects TODO comments from the code; pick some and send them to an agent. The tool remembers what was handed to whom.</td>
+<td><b>Nothing happens behind your back.</b> When a tool sends a message, creates a session or saves a file, Lev shows exactly what will happen first.</td>
+</tr>
+</table>
+
+Star a board to pin it to the sidebar — the two tools above live under **즐겨찾기** (Favorites).
+
+## Agents
+
+<img src="docs/screenshots/chat.png" alt="Conversation tab with a message from another agent" width="100%" />
+
+- **One list for every CLI** — status, cost and provider at a glance; right-click to rename, reset or delete.
+- **Agent-to-agent messages:** the receiver sees *who* sent it, and its answer goes back to the sender automatically. Above, "API 리뷰" answers a question from "리드".
 - **Child agents:** delegate sub-tasks; results are reported to the parent when all children finish.
 
 <table>
@@ -41,40 +78,12 @@ Coding-agent CLIs are powerful but live in separate terminals. Lev wraps them in
 <td width="50%"><img src="docs/screenshots/codex.png" alt="A Codex session" /></td>
 </tr>
 <tr>
-<td><b>/ commands</b> — app commands (<code>/model</code>, <code>/clear</code>, <code>/child</code>…), project skills, and the commands and skills each CLI reports.</td>
-<td><b>Codex and Gemini too</b> — per-session permission presets (read-only / edit / full, network & web search) mapped to each CLI's own flags.</td>
+<td><b>/ commands</b> — app commands, project skills, and the commands and skills each CLI reports.</td>
+<td><b>Codex and Gemini too</b> — per-session permission presets (read-only / edit / full, network & web search).</td>
 </tr>
 </table>
 
-### Dashboards you build by asking
-
-<img src="docs/screenshots/dashboard.png" alt="Starter dashboard with example requests" width="100%" />
-
-- Each project starts with a deliberately simple dashboard and **example requests** — click one, edit it, send it.
-- A **dashboard-builder** agent edits `.dashboard/` for you: JSON widgets (KPI, table, chart, list…), sandboxed **HTML panels**, and data **scripts** (Node.js built-in; Python and others if installed).
-- Boards can also be small **tools** (forms, buttons, file save) — favorite them to pin them in the sidebar.
-
-<img src="docs/screenshots/floating.png" alt="Floating chat window over the dashboard" width="100%" />
-
-Pick an agent while you're on a dashboard and its chat opens in a **floating window** — drag it, resize it, or fold it into a bubble.
-
-### Git built in
-
-<img src="docs/screenshots/git.png" alt="Git view: changes, history and diff" width="100%" />
-
-Stage, unstage and discard per file · commit (multi-line, amend) · history with per-file diffs · branches (switch, create, delete merged) · fetch / pull (fast-forward only) / push (sets upstream on first push). Untracked files are moved to the trash on discard, so nothing is lost by accident.
-
-### MCP hub, secrets and OAuth
-
-<img src="docs/screenshots/mcp.png" alt="MCP server screen with per-tool policies" width="100%" />
-
-- Lev connects your MCP servers **once** and exposes them to every session through its own `agent_workspace` server as `<server>__<tool>` — no per-CLI config.
-- Project servers from `.mcp.json` need **your approval** before they run (and again when the file changes).
-- **Per-tool policy:** allow / ask / block (blocked tools are hidden from agents). Defaults follow each tool's `readOnlyHint`.
-- **Secrets** are encrypted with the OS keychain and substituted into `${VAR}` — they never reach the CLI, the renderer or your project folder. Remote servers can sign in with **OAuth** (PKCE, loopback callback).
-- Paste a `"mcpServers": {…}` block from Claude or Gemini config as-is; tokens in headers are moved into secrets automatically.
-
-### Permissions you can see
+## Permissions
 
 <table>
 <tr>
@@ -82,24 +91,23 @@ Stage, unstage and discard per file · commit (multi-line, amend) · history wit
 <td width="50%"><img src="docs/screenshots/permissions.png" alt="Permissions screen with AutoMode" /></td>
 </tr>
 <tr>
-<td>Claude's own tools (Bash, WebFetch, Skill…) ask through Lev via <code>--permission-prompt-tool</code>. "Always allow" saves a project rule such as <code>Bash(npm *)</code>.</td>
-<td><b>AutoMode</b> approves everything that would prompt — while blocked tools stay blocked and an <code>AUTO</code> badge reminds you it's on.</td>
+<td>Claude's own tools (Bash, WebFetch, Skill…) ask you in the app first. "Always allow" remembers it for this project.</td>
+<td><b>AutoMode</b> approves everything that would prompt — including dashboard scripts — and shows an <code>AUTO</code> badge while it's on.</td>
 </tr>
 </table>
 
-### Skills per project
+## Skills
 
 <img src="docs/screenshots/skills.png" alt="Skills screen" width="100%" />
 
-Skills live in your project's `.skills/<name>/SKILL.md`. Lev ships two defaults — **create-skill** (how to write a good skill) and **dashboard-builder** — and lets you call any skill from chat with `/<skill> request`.
+Skills are reusable instructions stored with each project. Lev ships **dashboard-builder** (how to build boards) and **create-skill** (how to write a good skill); call any skill from chat by typing `/` and its name.
 
 ## Getting started
 
 **Requirements**
 
-- Node.js 22 or later (to build and run from source)
+- Node.js 22 or later
 - At least one agent CLI, logged in: [Claude Code](https://docs.anthropic.com/en/docs/claude-code), [OpenAI Codex](https://github.com/openai/codex), or [Gemini CLI](https://github.com/google-gemini/gemini-cli)
-- Git (for the Git view)
 
 ```bash
 git clone https://github.com/OmnifyAI/LevWorkspace.git
@@ -114,34 +122,14 @@ npm start          # run the built app
 npm run dist:win   # installer (also dist:mac, dist:linux)
 ```
 
-Then: **프로젝트 → 새 프로젝트** to pick a folder, **CLI 연결** to check which CLIs were detected, and start a session from the agent list.
+Then: **프로젝트 → 새 프로젝트** to pick a folder, **CLI 연결** to check which CLIs were detected, and type what you want to see into the dashboard's request box.
 
 > The UI is currently in Korean. English UI is planned.
 
-## How it works
+## Learn more
 
-```mermaid
-flowchart LR
-  UI[React UI] <-->|IPC| Main[Electron main]
-  Main -->|spawn, stream JSON| CLI[claude · codex · gemini]
-  CLI -->|stdio MCP| AW[agent_workspace MCP]
-  AW -->|local HTTP + token| Main
-  Main --> Hub[MCP hub] --> Ext[Your MCP servers]
-  Main --> Perm[Permission broker] --> UI
-```
+How boards, scripts, agent tools and permissions work under the hood: **[docs/technical.md](docs/technical.md)**
 
-- Each turn runs the CLI headless (`claude -p --output-format stream-json`, `codex exec --json`, `gemini --output-format stream-json`) and resumes the CLI's own session id.
-- Every session gets the `agent_workspace` MCP server and an `aw` command: read app data, run dashboard scripts, message other agents, use your routed MCP tools.
-- Anything that writes or reaches out — tool permissions, MCP calls on "ask", cross-agent messages, panel file saves — goes through one permission broker with rate limits and an audit trail in the activity log.
+## License
 
-Detailed notes (data sources, panel bridge, CLI flags, Windows quirks): [docs/technical.ko.md](docs/technical.ko.md) (Korean).
-
-## Project layout
-
-```
-src/main/         Electron main: sessions & CLI runner, MCP hub, permissions, git, Data API
-src/main/data/    dashboards, query engine, HTML panels, scripts, aw command, MCP server
-src/renderer/     React UI (views/, components/)
-src/shared/       types shared by main and renderer
-docs/             screenshots and technical notes
-```
+[MIT](LICENSE)

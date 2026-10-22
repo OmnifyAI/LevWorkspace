@@ -1,6 +1,21 @@
 # Lev 기술 메모
 
-> 동작 방식·설정 키·CLI 별 세부 사항을 모은 문서예요. 소개와 시작하기는 [README](../README.ko.md) 를 보세요.
+[English](technical.md) · **한국어** · [README](../README.ko.md) 로 돌아가기
+
+> 동작 방식·설정 키·CLI 별 세부 사항을 모은 문서예요.
+
+## 동작 방식
+
+```mermaid
+flowchart LR
+  UI[React UI + 보드 패널] <-->|IPC| Main[Electron 메인]
+  Main -->|실행, JSON 스트림| CLI[claude · codex · gemini]
+  CLI -->|stdio MCP| AW[agent_workspace 도구]
+  AW -->|로컬 HTTP + 토큰| Main
+  Main --> Scripts[보드 스크립트]
+  Main --> Hub[MCP 허브] --> Ext[내 MCP 서버들]
+  Main --> Perm[권한 중개] --> UI
+```
 
 ## 기능
 
@@ -27,7 +42,17 @@
   - `data/`: 패널(도구)이 쓰는 저장소. `aw.saveJSON/saveFile`(쓰기 — 확인 창, 패널 단위 "항상 허용"), `aw.readJSON/readFile/listFiles`(읽기).
     바깥으로 내보낼 때는 `aw.saveAs`(OS 저장 대화상자). 패널의 `<a download>` 는 샌드박스에서 막힌다.
   - `scripts/*`: 데이터 스크립트. 기본은 Node.js(`.mjs`/`.js`, 앱 내장 Node 로 실행 — 설치 불필요). 그 밖에 .py, .ps1, .sh, .rb, .php 도 되지만
-    PC 에 런타임이 있을 때만 (`GET /api/scripts` 의 `runtimes`, MCP `aw_list_scripts` 로 확인). stdin 으로 인자 JSON, stdout 으로 결과 JSON. 처음 실행·내용 변경 시 사용자 승인 창, 30초(최대 300초)·5MB 제한. 패널(`aw.run`), JSON 위젯(`script` 소스), Data API, MCP(`aw_run_script`)에서 쓴다.
+    PC 에 런타임이 있을 때만 (`GET /api/scripts` 의 `runtimes`, MCP `aw_list_scripts` 로 확인). stdin 으로 인자 JSON, stdout 으로 결과 JSON. 처음 실행·내용 변경 시 사용자 승인 창(자동 모드면 생략), 30초(최대 300초)·5MB 제한. 패널(`aw.run`), JSON 위젯(`script` 소스), Data API, MCP(`aw_run_script`)에서 쓴다.
+- 패널의 `window.aw`:
+
+  | | |
+  |---|---|
+  | 읽기 | `aw.query(q)`, `aw.schema()`, `aw.run(스크립트, 인자)`, `aw.readJSON(경로)`, `aw.readFile(경로)`, `aw.listFiles(폴더)` |
+  | 실행 (확인 창) | `aw.createSession({title, prompt, provider})`, `aw.sendMessage(id, 글)`, `aw.stopSession(id)`, `aw.saveJSON(경로, 값)`, `aw.saveFile(경로, 글)` |
+  | 내보내기 | `aw.saveAs(내용, {name})` — OS 저장 대화상자 |
+  | 이동 | `aw.openSession(id)`, `aw.openFile(경로)` |
+  | 이벤트 | `aw.on('state', fn)` — 앱 상태가 바뀔 때 |
+
 - 대시보드 상단 입력창에 원하는 내용을 쓰면 `dashboard-builder` 스킬을 단 "대시보드 빌더" 세션이 파일을 고친다.
   보드 파일의 `suggestions`(예시 요청 배열)는 입력창 아래 칩으로 보이고, 누르면 입력창에 채워진다.
 - 새 프로젝트의 기본 대시보드는 일부러 단순하다: 시작 안내 카드, 지표 3개(세션·누적 비용·프로젝트 스킬), 최근 활동, 예시 요청 5개 — 에이전트에게 말해서 자기 대시보드를 만들도록 이끈다.
@@ -48,7 +73,7 @@
 - 쓰기 동작(메시지 보내기·세션 만들기·중지): 패널 `aw.sendMessage/createSession/stopSession`, MCP `aw_send_message/aw_create_session(child 가능)/aw_stop_session`,
   HTTP `POST /api/sessions`, `/api/sessions/:id/messages`, `/api/sessions/:id/stop`. 모두 앱 안 확인 창(거부 / 이번만 허용 / 항상 허용)을 거친다.
   출처(패널·에이전트 세션·HTTP API)별로 1분 20회 제한, 에이전트는 자기 자신에게 보낼 수 없음, 10분 무응답 시 거부.
-  자동 모드(권한 화면 맨 위 토글): 확인 창이 뜰 요청(claude CLI 도구·"매번 확인" MCP 도구·쓰기 동작)을 모두 묻지 않고 허용하고 활동 로그에 남긴다.
+  자동 모드(권한 화면 맨 위 토글): 확인 창이 뜰 요청(claude CLI 도구·"매번 확인" MCP 도구·쓰기 동작·대시보드 스크립트)을 모두 묻지 않고 허용하고 활동 로그에 남긴다.
   "차단" MCP 도구와 "쓰기 동작 허용" 끔은 그대로 막고, 쓰기 동작의 1분 횟수 제한도 유지한다. 켜져 있으면 내비의 권한에 AUTO 표시.
   에이전트가 `aw_send_message` 로 보낸 메시지는 상대 채팅에 "보낸 에이전트"로 표시되고, 상대의 그 턴 답변이 보낸 세션에 "답장"으로 자동 전달된다
   (답장에는 다시 답장하지 않음). `wait: true` 면 답을 도구 결과로 받는다 (최대 4분, 넘으면 답장으로 도착). 서로 기다리는 순환은 거부한다. "항상 허용"은 권한 화면에서 회수·전체 끄기.
@@ -64,6 +89,9 @@ src/main/files.ts        프로젝트 파일 목록·미리보기·git 상태
 src/main/providers.ts    CLI 별 명령 구성 · 출력(JSON 스트림) 파싱 · 감지
 src/main/runner.ts       세션 프로세스 실행/스트리밍/대기열 (AgentManager)
 src/main/workspace.ts    도메인 로직 + Child/Multi 오케스트레이션
+src/main/permissions.ts  권한 중개
+src/main/mcpHub.ts       외부 MCP 서버 연결
+src/main/git.ts          Git 화면
 src/main/ipc.ts          렌더러 ↔ 메인 채널
 src/renderer/src/        React UI (views/*)
 ```
